@@ -8,14 +8,14 @@ export default function MessageInput() {
     const formRef = useRef<HTMLFormElement>(null);
     const [isSendable, setIsSendable] = useState(false);
     const [apiKey, setApiKey] = useState<string | null>(null);
-    const { append, removeLast } = useChat();
+    const { append, removeLast, setIsTyping } = useChat();
 
     useEffect(() => {
         if (typeof window !== "undefined") {
             setApiKey(sessionStorage.getItem("mistral_api_key"));
         }
         if (divRef.current) {
-            divRef.current.innerHTML = '<p class="w-full h-6" data-placeholder="Type your message..."></p>';
+            divRef.current.innerHTML = '<p class="w-full h-6" data-placeholder="Type something… the tiny cat is curious 🐾"></p>';
         }
     }, []);
 
@@ -24,7 +24,7 @@ export default function MessageInput() {
         if (!divRef.current) return;
 
         if (divRef.current.innerHTML.trim() === "") {
-            divRef.current.innerHTML = '<p class="w-full h-6" data-placeholder="Type your message..."></p>';
+            divRef.current.innerHTML = '<p class="w-full h-6" data-placeholder="Type something… the tiny cat is curious 🐾"></p>';
         }
         setIsSendable(false);
         if (apiKey === null) return;
@@ -81,14 +81,16 @@ export default function MessageInput() {
         e.preventDefault();
         if (!divRef.current || !isSendable) return;
         append({ role: "user", content: divRef.current.innerText })
+        setIsTyping(true);
         sendMessage(
-            apiKey || '0nNgcikXdaRIM2ATjdd9I0zyS7BsA4c5',
+            apiKey || '',
             [],
             divRef.current.innerText
         ).then(
             res => {
                 console.log("Assistant reply:", res);
                 append(res);
+                setIsTyping(false)
             }
         ).catch(
             err => {
@@ -101,7 +103,7 @@ export default function MessageInput() {
 
     const clearInput = () => {
         if (divRef.current) {
-            divRef.current.innerHTML = '<p class="w-full h-6" data-placeholder="Type your message..."></p>';
+            divRef.current.innerHTML = '<p class="w-full h-6" data-placeholder="Type something… the tiny cat is curious 🐾"></p>';
             setIsSendable(false);
         }
     }

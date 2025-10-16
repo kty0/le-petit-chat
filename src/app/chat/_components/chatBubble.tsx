@@ -2,8 +2,27 @@
 
 import clsx from "clsx";
 import { Msg } from "../_lib/types";
+import { remark } from "remark";
+import html from 'remark-html';
+import { useEffect, useState } from "react";
+import remarkGfm from "remark-gfm";
+
 
 export function ChatBubble({ message }: { message: Msg }) {
+
+    const [htmlContent, setHtmlContent] = useState<string | null>(null);
+
+    useEffect(() => {
+        const run = async () => {
+            const file = await remark()
+                .use(remarkGfm)
+                .use(html)
+                .process(message.content);
+            setHtmlContent(String(file));
+            console.log(file.toString())
+        };
+        run();
+    }, [])
 
     const isUser = message.role === 'user';
     return (
@@ -33,19 +52,21 @@ export function ChatBubble({ message }: { message: Msg }) {
                         : "bg-accent text-secondary dark:text-primary rounded-tl-sm",
                 )}
             >
-                <div className="whitespace-pre-wrap break-words leading-relaxed">{message.content}</div>
-                {/* {msg.time && (
+                {htmlContent ? (
                     <div
-                        className={clsx(
-                            "mt-1 text-[10px] opacity-70 select-none",
-                            isUser ? "text-white" : "text-neutral-500 dark:text-neutral-400",
-                        )}
-                        aria-hidden
-                    >
-                        {msg.time}
+                        className="
+              prose prose-sm dark:prose-invert max-w-none
+              prose-pre:bg-neutral-900 prose-pre:text-neutral-100 prose-pre:rounded-md prose-pre:p-3
+              prose-code:before:content-[''] prose-code:after:content-['']  /* pas de backticks visuels */
+              overflow-x-auto
+            "
+                        dangerouslySetInnerHTML={{ __html: htmlContent }}
+                    />
+                ) : (
+                    <div className="whitespace-pre-wrap break-words leading-relaxed">
+                        {message.content}
                     </div>
-                )} */}
-                {/* Tail pointer */}
+                )}
                 <div
                     className={clsx(
                         "absolute -bottom-0.5 h-3 w-3 rotate-45",

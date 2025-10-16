@@ -40,5 +40,5 @@ export async function sendMessage(
 
 export async function getHistory(): Promise<Msg[]> {
     // fetch DB/API here
-    return [{ role: "system", content: "Hello! How can I help you ?" }];
+    return [{ role: "system", content: "Hello! How may I help you ?" }];
 }
