@@ -1,22 +1,40 @@
 'use client'
-import * as React from "react";
+import { useState, useRef, useEffect } from "react";
+import { sendMessage } from "../actions";
+import { useChat } from "./chatProvider";
 
 export default function MessageInput() {
-    const divRef = React.useRef<HTMLDivElement>(null);
-    const formRef = React.useRef<HTMLFormElement>(null);
+    const divRef = useRef<HTMLDivElement>(null);
+    const formRef = useRef<HTMLFormElement>(null);
+    const [isSendable, setIsSendable] = useState(false);
+    const [apiKey, setApiKey] = useState<string | null>(null);
+    const { append, removeLast } = useChat();
 
-    React.useEffect(() => {
+    useEffect(() => {
+        if (typeof window !== "undefined") {
+            setApiKey(sessionStorage.getItem("mistral_api_key"));
+        }
         if (divRef.current) {
             divRef.current.innerHTML = '<p class="w-full h-6" data-placeholder="Type your message..."></p>';
         }
     }, []);
 
     const handleInput = () => {
+
         if (!divRef.current) return;
+
         if (divRef.current.innerHTML.trim() === "") {
             divRef.current.innerHTML = '<p class="w-full h-6" data-placeholder="Type your message..."></p>';
         }
-    };
+        setIsSendable(false);
+        if (apiKey === null) return;
+        for (const child of Array.from(divRef.current.childNodes)) {
+            if (child.hasChildNodes()) {
+                setIsSendable(true);
+                break;
+            }
+        };
+    }
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
         if (e.key === "Enter" && e.shiftKey) {
@@ -61,50 +79,52 @@ export default function MessageInput() {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        if (!divRef.current) return;
+        if (!divRef.current || !isSendable) return;
+        append({ role: "user", content: divRef.current.innerText })
+        sendMessage(
+            apiKey || '0nNgcikXdaRIM2ATjdd9I0zyS7BsA4c5',
+            [],
+            divRef.current.innerText
+        ).then(
+            res => {
+                console.log("Assistant reply:", res);
+                append(res);
+            }
+        ).catch(
+            err => {
+                console.error(err)
+                removeLast()
+            }
+        );
         clearInput();
-        fetch('https://api.mistral.ai/v1/chat/completions', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json',
-                'Authorization': `Bearer ${localStorage.getItem('mistral_api_key') || ''}`
-            },
-            body: JSON.stringify({
-                model: 'mistral-medium-2508',
-                messages: [{ "role": "user", "content": "Hello?" }]
-            }),
-        }).then(response => response.json())
-            .then(data => {
-                console.log('Success:', data.choices[0].message);
-            })
-            .catch((error) => {
-                console.error('Error:', error);
-            });
     }
 
     const clearInput = () => {
         if (divRef.current) {
             divRef.current.innerHTML = '<p class="w-full h-6" data-placeholder="Type your message..."></p>';
+            setIsSendable(false);
         }
     }
 
     return (
-        <form ref={formRef} className="flex gap-2 min-w-1/2 max-w-3/4 items-end" onSubmit={handleSubmit}>
-            <div className="flex-1 bg-primary text-secondary py-1 px-2 min-h-12 rounded-sm hover:cursor-text content-center">
-                <div ref={divRef}
-                    contentEditable="true"
-                    onInput={handleInput}
-                    onKeyDown={handleKeyDown}
-                    className="outline-none border-none"
-                >
-                </div>
-            </div >
-            <button className="rounded-sm w-12 bg-accent hover:bg-accent-hover"
-                type="submit">
-                <img src="/send.png" alt="Send" />
-            </button>
-        </form>
-
+        <div className="fixed w-full flex justify-center bottom-0 bg-white dark:bg-background">
+            {!apiKey && <div className="text-red-500 p-4"> Veuillez reseigner votre api key </div>}
+            <form ref={formRef} className="flex min-w-1/2 max-w-3/4 gap-2 items-end py-4" onSubmit={handleSubmit}>
+                <div className="flex-1 bg-primary text-secondary py-1 px-2 min-h-12 rounded-sm hover:cursor-text content-center">
+                    <div ref={divRef}
+                        contentEditable="true"
+                        onInput={handleInput}
+                        onKeyDown={handleKeyDown}
+                        className="outline-none border-none"
+                    >
+                    </div>
+                </div >
+                <button className="rounded-sm w-12 bg-accent hover:bg-accent-hover disabled:bg-primary disabled:cursor-not-allowed"
+                    type="submit"
+                    disabled={!isSendable}>
+                    <img src="/send.png" alt="Send" />
+                </button>
+            </form>
+        </div>
     );
 }

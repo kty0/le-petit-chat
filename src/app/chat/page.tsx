@@ -1,18 +1,21 @@
+import { Suspense } from "react";
+import ChatProvider from "./_components/chatProvider";
 import MessageInput from "./_components/messageInput";
+import { getHistory } from "./actions";
+import ChatWindows from "./_components/chatWindows";
 
 export default function ChatPage() {
-
+    const initialMessages = getHistory();
     return (
         <>
-            <div>
-
-                <div className="flex flex-col items-center h-screen p-8">
-                    <div className="flex flex-1 h-full">
-                        Chat component
+            <Suspense fallback={<div>Loading chat...</div>}>
+                <ChatProvider initialMessages={initialMessages}>
+                    <div className="w-screen h-screen py-8 overflow-x-hidden">
+                        <ChatWindows />
+                        <MessageInput />
                     </div>
-                    <MessageInput />
-                </div>
-            </div>
+                </ChatProvider>
+            </Suspense>
         </>
     )
 }
