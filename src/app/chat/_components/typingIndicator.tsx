@@ -29,7 +29,15 @@ export function TypingIndicator() {
                 className="h-10 w-10 rounded-full self-end"
                 loading="lazy"
             />
-            <p className="text-black font-light wave-gradient dark:wave-gradient-dark">
+            <p
+                className="
+                    text-transparent bg-clip-text 
+                    bg-[linear-gradient(90deg,rgba(0,0,0,0.35),rgba(0,0,0,0.9),rgba(0,0,0,0.35))]
+                    dark:bg-[linear-gradient(90deg,rgba(255,255,255,0.35),rgba(255,255,255,0.95),rgba(255,255,255,0.35))]
+                    bg-[length:200%_100%]
+                    animate-[shimmer_2.2s_linear_infinite]
+                "
+            >
                 {text}
             </p>
         </div>

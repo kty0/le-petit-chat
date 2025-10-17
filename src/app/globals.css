@@ -27,6 +27,8 @@
     --color-primary: #363636;
     --color-secondary: #FFFAE9;
   }
+
+
 }
 
 body {
@@ -41,31 +43,7 @@ body {
   opacity: 0.5;
 }
 
-.wave-gradient-dark {
-  background: linear-gradient(90deg,
-      rgba(255, 255, 255, 0.4) 0%,
-      rgba(255, 255, 255, 0.9) 50%,
-      rgba(255, 255, 255, 0.4) 100%);
-  background-size: 200% 100%;
-  background-clip: text;
-  -webkit-background-clip: text;
-  color: transparent;
-  animation: wave-gradient-move 2.5s infinite linear;
-}
-
-.wave-gradient {
-  background: linear-gradient(90deg,
-      rgba(0, 0, 0, 0.4) 0%,
-      rgba(0, 0, 0, 0.9) 50%,
-      rgba(0, 0, 0, 0.4) 100%);
-  background-size: 200% 100%;
-  background-clip: text;
-  -webkit-background-clip: text;
-  color: transparent;
-  animation: wave-gradient-move 2.5s infinite linear;
-}
-
-@keyframes wave-gradient-move {
+@keyframes shimmer {
   0% {
     background-position: 200% 0;
   }
