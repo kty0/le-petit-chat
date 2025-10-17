@@ -10,7 +10,7 @@ async function callMistral(key: string, messages: Msg[]): Promise<Msg> {
             "Content-Type": "application/json",
         },
         body: JSON.stringify({
-            model: "mistral-medium-2508",
+            model: "devstral-small-2507",
             messages: messages.map(m => ({ role: m.role, content: m.content })),
         }),
         cache: "no-store",

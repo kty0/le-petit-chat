@@ -8,7 +8,7 @@ export default function MessageInput() {
     const formRef = useRef<HTMLFormElement>(null);
     const [isSendable, setIsSendable] = useState(false);
     const [apiKey, setApiKey] = useState<string | null>(null);
-    const { append, removeLast, setIsTyping } = useChat();
+    const { append, removeLast, setIsTyping, messages } = useChat();
 
     useEffect(() => {
         if (typeof window !== "undefined") {
@@ -85,7 +85,7 @@ export default function MessageInput() {
         setIsTyping(true);
         sendMessage(
             apiKey || '',
-            [],
+            messages,
             divRef.current.innerText
         ).then(
             res => {
