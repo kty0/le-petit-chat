@@ -65,3 +65,4 @@ Your key is stored locally in your browser’s sessionStorage — it is never sh
 - Model selector (Mistral 7B / Mixtral)
 - “Copy code” button in chat bubbles
 - Improved Markdown rendering
+- Make the interface fully responsive for mobile device
