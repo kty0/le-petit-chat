@@ -66,3 +66,7 @@ Your key is stored locally in your browser’s sessionStorage — it is never sh
 - “Copy code” button in chat bubbles
 - Improved Markdown rendering
 - Make the interface fully responsive for mobile device
+- Add a Snackbar or proper error handling system for API request failures
+    - Display clear, non-blocking notifications
+    - Handle network / API / key errors gracefully
+    - Keep user experience smooth even when errors occur
