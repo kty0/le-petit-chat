@@ -29,7 +29,7 @@ export function TypingIndicator() {
                 className="h-10 w-10 rounded-full self-end"
                 loading="lazy"
             />
-            <p className="text-white/60 font-light wave-gradient">
+            <p className="text-black font-light wave-gradient dark:wave-gradient-dark">
                 {text}
             </p>
         </div>
